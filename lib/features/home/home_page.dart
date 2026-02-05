@@ -9,6 +9,8 @@
 //   -> Horizontale Filter-Chips für Kategorien
 // - EventCard: lib/features/home/widgets/event_card.dart
 //   -> Karten mit Bild-Thumbnail links
+// - SponsoredCard: lib/features/home/widgets/sponsored_card.dart
+//   -> Dezente Partner-Werbung nach dem 2. Event
 // - PlaceholderPage: lib/features/home/widgets/placeholder_page.dart
 //   -> Platzhalter für nicht implementierte Tabs
 //
@@ -16,12 +18,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:hersbruck_together/app/theme.dart';
+import 'package:hersbruck_together/data/mock/mock_ad_repository.dart';
 import 'package:hersbruck_together/data/mock/mock_event_repository.dart';
+import 'package:hersbruck_together/data/models/ad.dart';
 import 'package:hersbruck_together/data/models/event.dart';
 import 'package:hersbruck_together/features/home/widgets/category_chips.dart';
 import 'package:hersbruck_together/features/home/widgets/event_card.dart';
 import 'package:hersbruck_together/features/home/widgets/home_header.dart';
 import 'package:hersbruck_together/features/home/widgets/placeholder_page.dart';
+import 'package:hersbruck_together/features/home/widgets/sponsored_card.dart';
 import 'package:hersbruck_together/ui/widgets/elegant_background.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,7 +37,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _repo = MockEventRepository();
+  final _eventRepo = MockEventRepository();
+  final _adRepo = MockAdRepository();
   late final TextEditingController _searchController;
 
   int _currentTabIndex = 0;
@@ -105,9 +111,50 @@ class _HomePageState extends State<HomePage> {
     }).toList();
   }
 
+  List<Widget> _buildListItems(List<Event> events, Ad? sponsoredAd) {
+    final items = <Widget>[];
+    const adPosition = 2;
+
+    for (int i = 0; i < events.length; i++) {
+      if (i == adPosition && sponsoredAd != null) {
+        items.add(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: SponsoredCard(
+              ad: sponsoredAd,
+              onTap: () {},
+              onCta: () {},
+            ),
+          ),
+        );
+      }
+      items.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: EventCard(event: events[i]),
+        ),
+      );
+    }
+
+    if (events.length <= adPosition && sponsoredAd != null && events.isNotEmpty) {
+      items.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: SponsoredCard(
+            ad: sponsoredAd,
+            onTap: () {},
+            onCta: () {},
+          ),
+        ),
+      );
+    }
+
+    return items;
+  }
+
   Widget _buildHomeTab() {
     return FutureBuilder<List<Event>>(
-      future: _repo.listUpcoming(),
+      future: _eventRepo.listUpcoming(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -119,6 +166,8 @@ class _HomePageState extends State<HomePage> {
         }
 
         final events = _filterEvents(snapshot.data ?? []);
+        final sponsoredAd = _adRepo.getSponsoredAd();
+        final listItems = _buildListItems(events, sponsoredAd);
 
         return CustomScrollView(
           slivers: [
@@ -177,14 +226,8 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final event = events[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: EventCard(event: event),
-                      );
-                    },
-                    childCount: events.length,
+                    (context, index) => listItems[index],
+                    childCount: listItems.length,
                   ),
                 ),
               ),
