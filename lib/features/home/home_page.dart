@@ -1,24 +1,30 @@
-// Hersbruck Together - Home Page UI Mockup
+// Hersbruck Together - Home Page UI Mockup (Dark + Gold + Glass + Stars)
 //
 // Aufbau:
+// - StarBackground: lib/ui/widgets/star_background.dart
+//   -> Sterne + Vignette Hintergrund
+// - GlassContainer: lib/ui/widgets/glass_container.dart
+//   -> Glassmorphism Container
 // - HomeHeader: lib/features/home/widgets/home_header.dart
-//   -> Titel, Untertitel, Account-Icon, Standortchip, Suchfeld
+//   -> Titel "Events", Segmented Tabs, Searchbar mit Filter
 // - CategoryChips: lib/features/home/widgets/category_chips.dart
 //   -> Horizontale Filter-Chips für Kategorien
 // - EventCard: lib/features/home/widgets/event_card.dart
-//   -> Karten für Veranstaltungen mit Bookmark-Toggle
+//   -> Karten mit Thumbnail links
 // - PlaceholderPage: lib/features/home/widgets/placeholder_page.dart
 //   -> Platzhalter für nicht implementierte Tabs
 //
-// State: selectedCategory, bookmarkedIds, searchQuery, currentTabIndex
+// State: selectedCategory, searchQuery, currentTabIndex, timeFilter
 
 import 'package:flutter/material.dart';
+import 'package:hersbruck_together/app/theme.dart';
 import 'package:hersbruck_together/data/mock/mock_event_repository.dart';
 import 'package:hersbruck_together/data/models/event.dart';
 import 'package:hersbruck_together/features/home/widgets/category_chips.dart';
 import 'package:hersbruck_together/features/home/widgets/event_card.dart';
 import 'package:hersbruck_together/features/home/widgets/home_header.dart';
 import 'package:hersbruck_together/features/home/widgets/placeholder_page.dart';
+import 'package:hersbruck_together/ui/widgets/star_background.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,9 +39,12 @@ class _HomePageState extends State<HomePage> {
   int _currentTabIndex = 0;
   String _selectedCategory = 'Alle';
   String _searchQuery = '';
-  final Set<String> _bookmarkedIds = {};
+  TimeFilter _timeFilter = TimeFilter.heute;
 
   List<Event> _filterEvents(List<Event> events) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
     return events.where((event) {
       final matchesCategory =
           _selectedCategory == 'Alle' || event.category == _selectedCategory;
@@ -46,16 +55,47 @@ class _HomePageState extends State<HomePage> {
           event.location.toLowerCase().contains(query) ||
           event.category.toLowerCase().contains(query);
 
-      return matchesCategory && matchesSearch;
+      final eventDate = DateTime(
+        event.startsAt.year,
+        event.startsAt.month,
+        event.startsAt.day,
+      );
+
+      bool matchesTime;
+      switch (_timeFilter) {
+        case TimeFilter.heute:
+          matchesTime = eventDate == today;
+          break;
+        case TimeFilter.wochenende:
+          final saturday =
+              today.add(Duration(days: DateTime.saturday - today.weekday));
+          final sunday = saturday.add(const Duration(days: 1));
+          matchesTime = eventDate == saturday ||
+              eventDate == sunday ||
+              (eventDate.isAfter(today) &&
+                  eventDate.isBefore(sunday.add(const Duration(days: 1))));
+          break;
+        case TimeFilter.siebenTage:
+          final endDate = today.add(const Duration(days: 7));
+          matchesTime = !eventDate.isBefore(today) &&
+              eventDate.isBefore(endDate.add(const Duration(days: 1)));
+          break;
+      }
+
+      return matchesCategory && matchesSearch && matchesTime;
     }).toList();
   }
 
-  Widget _buildTodayTab() {
+  Widget _buildHomeTab() {
     return FutureBuilder<List<Event>>(
       future: _repo.listUpcoming(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: CircularProgressIndicator(
+              color: goldAccent,
+            ),
+          );
         }
 
         final events = _filterEvents(snapshot.data ?? []);
@@ -64,7 +104,7 @@ class _HomePageState extends State<HomePage> {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 child: HomeHeader(
                   searchQuery: _searchQuery,
                   onSearchChanged: (value) {
@@ -72,12 +112,18 @@ class _HomePageState extends State<HomePage> {
                       _searchQuery = value;
                     });
                   },
+                  selectedTimeFilter: _timeFilter,
+                  onTimeFilterChanged: (filter) {
+                    setState(() {
+                      _timeFilter = filter;
+                    });
+                  },
                 ),
               ),
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 0, 16),
+                padding: const EdgeInsets.fromLTRB(20, 16, 0, 12),
                 child: CategoryChips(
                   selectedCategory: _selectedCategory,
                   onCategorySelected: (category) {
@@ -97,16 +143,15 @@ class _HomePageState extends State<HomePage> {
                       Icon(
                         Icons.event_busy_outlined,
                         size: 64,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Colors.white.withValues(alpha: 0.4),
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Keine Veranstaltungen gefunden',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                            ),
+                        'Keine Events gefunden',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white.withValues(alpha: 0.6),
+                        ),
                       ),
                     ],
                   ),
@@ -114,26 +159,14 @@ class _HomePageState extends State<HomePage> {
               )
             else
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final event = events[index];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
-                        child: EventCard(
-                          event: event,
-                          isBookmarked: _bookmarkedIds.contains(event.id),
-                          onBookmarkToggle: () {
-                            setState(() {
-                              if (_bookmarkedIds.contains(event.id)) {
-                                _bookmarkedIds.remove(event.id);
-                              } else {
-                                _bookmarkedIds.add(event.id);
-                              }
-                            });
-                          },
-                        ),
+                        child: EventCard(event: event),
                       );
                     },
                     childCount: events.length,
@@ -149,70 +182,81 @@ class _HomePageState extends State<HomePage> {
   Widget _buildBody() {
     switch (_currentTabIndex) {
       case 0:
-        return _buildTodayTab();
+        return _buildHomeTab();
       case 1:
-        return const PlaceholderPage(
-          title: 'Entdecken',
-          icon: Icons.explore_outlined,
-        );
-      case 2:
         return const PlaceholderPage(
           title: 'Karte',
           icon: Icons.map_outlined,
         );
+      case 2:
+        return const PlaceholderPage(
+          title: 'News',
+          icon: Icons.newspaper_outlined,
+        );
       case 3:
         return const PlaceholderPage(
-          title: 'Profil',
-          icon: Icons.person_outlined,
+          title: 'Spenden',
+          icon: Icons.favorite_outline,
         );
       default:
-        return _buildTodayTab();
+        return _buildHomeTab();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
-      backgroundColor: colorScheme.surface,
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 900),
-            child: _buildBody(),
+      extendBody: true,
+      body: StarBackground(
+        child: SafeArea(
+          bottom: false,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: _buildBody(),
+            ),
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentTabIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _currentTabIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.today_outlined),
-            selectedIcon: Icon(Icons.today),
-            label: 'Heute',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Colors.white.withValues(alpha: 0.08),
+              width: 1,
+            ),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.explore_outlined),
-            selectedIcon: Icon(Icons.explore),
-            label: 'Entdecken',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.map_outlined),
-            selectedIcon: Icon(Icons.map),
-            label: 'Karte',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outlined),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profil',
-          ),
-        ],
+        ),
+        child: NavigationBar(
+          selectedIndex: _currentTabIndex,
+          onDestinationSelected: (index) {
+            setState(() {
+              _currentTabIndex = index;
+            });
+          },
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.location_on_outlined),
+              selectedIcon: Icon(Icons.location_on),
+              label: 'Karte',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.newspaper_outlined),
+              selectedIcon: Icon(Icons.newspaper),
+              label: 'News',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.favorite_outline),
+              selectedIcon: Icon(Icons.favorite),
+              label: 'Spenden',
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:hersbruck_together/app/theme.dart';
 
 class CategoryChips extends StatelessWidget {
   final String selectedCategory;
@@ -6,12 +8,10 @@ class CategoryChips extends StatelessWidget {
 
   static const List<String> categories = [
     'Alle',
-    'Kultur',
-    'Sport',
+    'Feste',
     'Familie',
-    'Musik',
-    'Essen',
-    'Natur',
+    'Kultur',
+    'Freizeit',
   ];
 
   const CategoryChips({
@@ -22,44 +22,51 @@ class CategoryChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return SizedBox(
-      height: 40,
+      height: 36,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        separatorBuilder: (context, index) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           final category = categories[index];
           final isSelected = category == selectedCategory;
 
-          return FilterChip(
-            label: Text(category),
-            selected: isSelected,
-            onSelected: (selected) {
-              if (selected) {
-                onCategorySelected(category);
-              }
-            },
-            selectedColor: colorScheme.primaryContainer,
-            checkmarkColor: colorScheme.onPrimaryContainer,
-            backgroundColor: colorScheme.surfaceContainerHighest,
-            labelStyle: TextStyle(
-              color: isSelected
-                  ? colorScheme.onPrimaryContainer
-                  : colorScheme.onSurfaceVariant,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(
-                color: isSelected
-                    ? colorScheme.primary.withValues(alpha: 0.3)
-                    : Colors.transparent,
+          return GestureDetector(
+            onTap: () => onCategorySelected(category),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    color: isSelected
+                        ? Colors.white.withValues(alpha: 0.2)
+                        : Colors.white.withValues(alpha: 0.08),
+                    border: Border.all(
+                      color: isSelected
+                          ? goldAccent.withValues(alpha: 0.5)
+                          : Colors.white.withValues(alpha: 0.15),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    category,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.white70,
+                      fontSize: 14,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.normal,
+                    ),
+                  ),
+                ),
               ),
             ),
-            showCheckmark: false,
           );
         },
       ),

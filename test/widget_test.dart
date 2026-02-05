@@ -14,6 +14,6 @@ void main() {
     // 3) dann noch ausrendern lassen
     await tester.pumpAndSettle();
 
-    expect(find.text('Hersbruck Together'), findsWidgets);
+    expect(find.text('Events'), findsOneWidget);
   });
 }
