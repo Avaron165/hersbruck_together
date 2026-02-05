@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../ui/widgets/app_scaffold.dart';
-import '../../data/mock/mock_event_repository.dart';
+import 'package:hersbruck_together/data/mock/mock_event_repository.dart';
+import 'package:hersbruck_together/ui/widgets/app_scaffold.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,9 +23,9 @@ class _HomePageState extends State<HomePage> {
           return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: events.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, i) {
-              final e = events[i];
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            itemBuilder: (context, index) {
+              final e = events[index];
               return Card(
                 child: ListTile(
                   title: Text(e.title),

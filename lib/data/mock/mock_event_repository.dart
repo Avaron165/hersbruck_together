@@ -1,5 +1,5 @@
-import '../models/event.dart';
-import '../repositories/event_repository.dart';
+import 'package:hersbruck_together/data/models/event.dart';
+import 'package:hersbruck_together/data/repositories/event_repository.dart';
 
 class MockEventRepository implements EventRepository {
   @override

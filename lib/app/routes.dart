@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import '../features/home/home_page.dart';
+import 'package:hersbruck_together/features/home/home_page.dart';
 
 class Routes {
   static const home = '/';
