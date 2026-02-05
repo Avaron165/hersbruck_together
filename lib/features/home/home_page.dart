@@ -49,11 +49,25 @@ class _HomePageState extends State<HomePage> {
   String _searchQuery = '';
   TimeFilter _timeFilter = TimeFilter.heute;
 
+  List<Event>? _events;
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
     _searchController.addListener(_onSearchChanged);
+    _loadEvents();
+  }
+
+  Future<void> _loadEvents() async {
+    final events = await _eventRepo.listUpcoming();
+    if (mounted) {
+      setState(() {
+        _events = events;
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -168,87 +182,82 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildHomeTab() {
-    return FutureBuilder<List<Event>>(
-      future: _eventRepo.listUpcoming(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: goldAccent.withValues(alpha: 0.7),
-              strokeWidth: 2,
-            ),
-          );
-        }
+    final events = _isLoading ? <Event>[] : _filterEvents(_events ?? []);
+    final sponsoredAd = _adRepo.getSponsoredAd();
+    final listItems = _buildListItems(events, sponsoredAd);
 
-        final events = _filterEvents(snapshot.data ?? []);
-        final sponsoredAd = _adRepo.getSponsoredAd();
-        final listItems = _buildListItems(events, sponsoredAd);
-
-        return CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-                child: HomeHeader(
-                  searchController: _searchController,
-                  selectedTimeFilter: _timeFilter,
-                  onTimeFilterChanged: (filter) {
-                    setState(() {
-                      _timeFilter = filter;
-                    });
-                  },
-                ),
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: HomeHeader(
+              searchController: _searchController,
+              selectedTimeFilter: _timeFilter,
+              onTimeFilterChanged: (filter) {
+                setState(() {
+                  _timeFilter = filter;
+                });
+              },
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 14, 0, 12),
+            child: CategoryChips(
+              selectedCategory: _selectedCategory,
+              onCategorySelected: (category) {
+                setState(() {
+                  _selectedCategory = category;
+                });
+              },
+            ),
+          ),
+        ),
+        if (_isLoading)
+          SliverFillRemaining(
+            child: Center(
+              child: CircularProgressIndicator(
+                color: goldAccent.withValues(alpha: 0.7),
+                strokeWidth: 2,
               ),
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 14, 0, 12),
-                child: CategoryChips(
-                  selectedCategory: _selectedCategory,
-                  onCategorySelected: (category) {
-                    setState(() {
-                      _selectedCategory = category;
-                    });
-                  },
-                ),
+          )
+        else if (events.isEmpty)
+          SliverFillRemaining(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.event_busy_outlined,
+                    size: 56,
+                    color: Colors.white.withValues(alpha: 0.25),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Keine Events gefunden',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.white.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ],
               ),
             ),
-            if (events.isEmpty)
-              SliverFillRemaining(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.event_busy_outlined,
-                        size: 56,
-                        color: Colors.white.withValues(alpha: 0.25),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Keine Events gefunden',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white.withValues(alpha: 0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => listItems[index],
-                    childCount: listItems.length,
-                  ),
-                ),
+          )
+        else
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => listItems[index],
+                childCount: listItems.length,
               ),
-          ],
-        );
-      },
+            ),
+          ),
+      ],
     );
   }
 
