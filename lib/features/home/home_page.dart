@@ -11,6 +11,8 @@
 //   -> Karten mit Bild-Thumbnail links
 // - SponsoredCard: lib/features/home/widgets/sponsored_card.dart
 //   -> Dezente Partner-Werbung nach dem 2. Event
+// - EventDetailPage: lib/features/home/event_detail_page.dart
+//   -> Detailseite für Events
 // - PlaceholderPage: lib/features/home/widgets/placeholder_page.dart
 //   -> Platzhalter für nicht implementierte Tabs
 //
@@ -22,6 +24,7 @@ import 'package:hersbruck_together/data/mock/mock_ad_repository.dart';
 import 'package:hersbruck_together/data/mock/mock_event_repository.dart';
 import 'package:hersbruck_together/data/models/ad.dart';
 import 'package:hersbruck_together/data/models/event.dart';
+import 'package:hersbruck_together/features/home/event_detail_page.dart';
 import 'package:hersbruck_together/features/home/widgets/category_chips.dart';
 import 'package:hersbruck_together/features/home/widgets/event_card.dart';
 import 'package:hersbruck_together/features/home/widgets/home_header.dart';
@@ -64,6 +67,14 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _searchQuery = _searchController.text;
     });
+  }
+
+  void _openEventDetail(Event event) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => EventDetailPage(event: event),
+      ),
+    );
   }
 
   List<Event> _filterEvents(List<Event> events) {
@@ -128,10 +139,14 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       }
+      final event = events[i];
       items.add(
         Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: EventCard(event: events[i]),
+          child: EventCard(
+            event: event,
+            onTap: () => _openEventDetail(event),
+          ),
         ),
       );
     }
