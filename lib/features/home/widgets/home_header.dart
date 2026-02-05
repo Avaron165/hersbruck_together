@@ -1,19 +1,16 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hersbruck_together/app/theme.dart';
 
 enum TimeFilter { heute, wochenende, siebenTage }
 
 class HomeHeader extends StatelessWidget {
-  final String searchQuery;
-  final ValueChanged<String> onSearchChanged;
+  final TextEditingController searchController;
   final TimeFilter selectedTimeFilter;
   final ValueChanged<TimeFilter> onTimeFilterChanged;
 
   const HomeHeader({
     super.key,
-    required this.searchQuery,
-    required this.onSearchChanged,
+    required this.searchController,
     required this.selectedTimeFilter,
     required this.onTimeFilterChanged,
   });
@@ -23,64 +20,45 @@ class HomeHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Events',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.search,
-                color: Colors.white70,
-                size: 26,
-              ),
-              onPressed: () {},
-            ),
-          ],
+        const Text(
+          'Events',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            letterSpacing: -0.5,
+          ),
         ),
         const SizedBox(height: 16),
         _buildTimeFilterTabs(),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         _buildSearchBar(),
       ],
     );
   }
 
   Widget _buildTimeFilterTabs() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(25),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
-            color: Colors.white.withValues(alpha: 0.08),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.12),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              _buildTabItem('Heute', TimeFilter.heute),
-              _buildTabItem('Wochenende', TimeFilter.wochenende),
-              _buildTabItem('7 Tage', TimeFilter.siebenTage, showDropdown: true),
-            ],
-          ),
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white.withValues(alpha: 0.05),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.08),
+          width: 1,
         ),
+      ),
+      child: Row(
+        children: [
+          _buildTabItem('Heute', TimeFilter.heute),
+          _buildTabItem('Wochenende', TimeFilter.wochenende),
+          _buildTabItem('7 Tage', TimeFilter.siebenTage),
+        ],
       ),
     );
   }
 
-  Widget _buildTabItem(String label, TimeFilter filter,
-      {bool showDropdown = false}) {
+  Widget _buildTabItem(String label, TimeFilter filter) {
     final isSelected = selectedTimeFilter == filter;
 
     return Expanded(
@@ -89,31 +67,19 @@ class HomeHeader extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(10),
             color: isSelected
-                ? Colors.white.withValues(alpha: 0.15)
+                ? Colors.white.withValues(alpha: 0.1)
                 : Colors.transparent,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white60,
-                  fontSize: 14,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                ),
-              ),
-              if (showDropdown) ...[
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.keyboard_arrow_down,
-                  size: 18,
-                  color: isSelected ? Colors.white : Colors.white60,
-                ),
-              ],
-            ],
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.white54,
+              fontSize: 13,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            ),
           ),
         ),
       ),
@@ -121,70 +87,68 @@ class HomeHeader extends StatelessWidget {
   }
 
   Widget _buildSearchBar() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(25),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
-            color: Colors.white.withValues(alpha: 0.08),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.12),
-              width: 1,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white.withValues(alpha: 0.05),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.08),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: searchController,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+              decoration: InputDecoration(
+                hintText: 'Nach Events suchen...',
+                hintStyle: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4),
+                  fontSize: 14,
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.white.withValues(alpha: 0.4),
+                  size: 20,
+                ),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+              ),
             ),
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  onChanged: onSearchChanged,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Nach Events suchen...',
-                    hintStyle: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      fontSize: 14,
-                    ),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.white.withValues(alpha: 0.5),
-                      size: 20,
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                  ),
+          Container(
+            margin: const EdgeInsets.only(right: 6),
+            child: TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                backgroundColor: Colors.white.withValues(alpha: 0.05),
+              ),
+              child: Text(
+                'Filter',
+                style: TextStyle(
+                  color: goldAccent.withValues(alpha: 0.9),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(right: 6),
-                child: TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    backgroundColor: Colors.white.withValues(alpha: 0.08),
-                  ),
-                  child: Text(
-                    'Filter',
-                    style: TextStyle(
-                      color: goldLight,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

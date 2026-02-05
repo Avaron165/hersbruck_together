@@ -5,7 +5,7 @@ class Event {
   final DateTime? endsAt;
   final String location;
   final String category;
-  final String? imageAsset;
+  final String? imageUrl;
 
   const Event({
     required this.id,
@@ -14,6 +14,6 @@ class Event {
     this.endsAt,
     required this.location,
     required this.category,
-    this.imageAsset,
+    this.imageUrl,
   });
 }

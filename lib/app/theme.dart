@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-const goldAccent = Color(0xFFD4AF37);
-const goldLight = Color(0xFFE8D5A3);
-const darkBackground = Color(0xFF0D0D12);
-const darkSurface = Color(0xFF1A1A24);
+const goldAccent = Color(0xFFC9A46A);
+const goldLight = Color(0xFFDDC9A3);
+const darkBackground = Color(0xFF0A0A0E);
+const darkSurface = Color(0xFF12121A);
 
 ThemeData buildTheme() {
   return ThemeData(
@@ -16,7 +16,7 @@ ThemeData buildTheme() {
       onSecondary: Colors.black,
       surface: darkSurface,
       onSurface: Colors.white,
-      surfaceContainerHighest: Color(0xFF2A2A36),
+      surfaceContainerHighest: Color(0xFF1A1A22),
     ),
     useMaterial3: true,
     appBarTheme: const AppBarTheme(
@@ -25,19 +25,19 @@ ThemeData buildTheme() {
       scrolledUnderElevation: 0,
     ),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: darkSurface.withValues(alpha: 0.9),
+      backgroundColor: darkBackground.withValues(alpha: 0.95),
       indicatorColor: Colors.transparent,
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return const TextStyle(
             color: goldAccent,
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: FontWeight.w500,
           );
         }
         return TextStyle(
-          color: Colors.white.withValues(alpha: 0.6),
-          fontSize: 12,
+          color: Colors.white.withValues(alpha: 0.5),
+          fontSize: 11,
         );
       }),
       iconTheme: WidgetStateProperty.resolveWith((states) {
@@ -45,7 +45,7 @@ ThemeData buildTheme() {
           return const IconThemeData(color: goldAccent, size: 24);
         }
         return IconThemeData(
-          color: Colors.white.withValues(alpha: 0.6),
+          color: Colors.white.withValues(alpha: 0.5),
           size: 24,
         );
       }),
@@ -55,6 +55,7 @@ ThemeData buildTheme() {
         fontSize: 28,
         fontWeight: FontWeight.bold,
         color: Colors.white,
+        letterSpacing: -0.5,
       ),
       titleLarge: TextStyle(
         fontSize: 18,

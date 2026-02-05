@@ -1,5 +1,3 @@
-import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hersbruck_together/app/theme.dart';
 import 'package:hersbruck_together/data/models/event.dart';
@@ -55,141 +53,127 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final random = Random(event.id.hashCode);
-    final hue = random.nextDouble() * 40 + 20;
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withValues(alpha: 0.08),
-                Colors.white.withValues(alpha: 0.03),
-              ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: Colors.white.withValues(alpha: 0.04),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.08),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 100,
+            height: 100,
+            margin: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: const Color(0xFF1A1A22),
             ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.1),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      HSLColor.fromAHSL(1, hue, 0.4, 0.3).toColor(),
-                      HSLColor.fromAHSL(1, hue + 20, 0.5, 0.2).toColor(),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: goldAccent.withValues(alpha: 0.15),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: CustomPaint(
-                          painter: _ThumbnailPainter(
-                            seed: event.id.hashCode,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 4,
-                      right: 4,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Icon(
-                          _getCategoryIcon(event.category),
-                          color: goldAccent,
-                          size: 14,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 8,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        event.title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        '${_formatDatePrefix()}${_formatTimeRange()}',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.white.withValues(alpha: 0.7),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 14,
-                            color: goldAccent.withValues(alpha: 0.8),
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              event.location,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white.withValues(alpha: 0.6),
-                              ),
-                              overflow: TextOverflow.ellipsis,
+            clipBehavior: Clip.antiAlias,
+            child: event.imageUrl != null
+                ? Image.network(
+                    event.imageUrl!,
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.high,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        color: const Color(0xFF1A1A22),
+                        child: Center(
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: goldAccent.withValues(alpha: 0.5),
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
                             ),
                           ),
-                        ],
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: const Color(0xFF1A1A22),
+                        child: Icon(
+                          _getCategoryIcon(event.category),
+                          color: goldAccent.withValues(alpha: 0.4),
+                          size: 32,
+                        ),
+                      );
+                    },
+                  )
+                : Container(
+                    color: const Color(0xFF1A1A22),
+                    child: Icon(
+                      _getCategoryIcon(event.category),
+                      color: goldAccent.withValues(alpha: 0.4),
+                      size: 32,
+                    ),
+                  ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 12,
+                horizontal: 4,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    event.title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '${_formatDatePrefix()}${_formatTimeRange()}',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.white.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        size: 13,
+                        color: goldAccent.withValues(alpha: 0.7),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          event.location,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withValues(alpha: 0.5),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
-              const SizedBox(width: 8),
-            ],
+            ),
           ),
-        ),
+          const SizedBox(width: 12),
+        ],
       ),
     );
   }
@@ -208,31 +192,4 @@ class EventCard extends StatelessWidget {
         return Icons.event_outlined;
     }
   }
-}
-
-class _ThumbnailPainter extends CustomPainter {
-  final int seed;
-
-  _ThumbnailPainter({required this.seed});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final random = Random(seed);
-
-    for (int i = 0; i < 12; i++) {
-      final x = random.nextDouble() * size.width;
-      final y = random.nextDouble() * size.height;
-      final radius = random.nextDouble() * 20 + 5;
-      final opacity = random.nextDouble() * 0.3 + 0.1;
-
-      final paint = Paint()
-        ..color = goldAccent.withValues(alpha: opacity)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-
-      canvas.drawCircle(Offset(x, y), radius, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

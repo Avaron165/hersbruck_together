@@ -1,16 +1,14 @@
-// Hersbruck Together - Home Page UI Mockup (Dark + Gold + Glass + Stars)
+// Hersbruck Together - Home Page UI Mockup (Dark + Gold + Elegant)
 //
 // Aufbau:
-// - StarBackground: lib/ui/widgets/star_background.dart
-//   -> Sterne + Vignette Hintergrund
-// - GlassContainer: lib/ui/widgets/glass_container.dart
-//   -> Glassmorphism Container
+// - ElegantBackground: lib/ui/widgets/elegant_background.dart
+//   -> Subtiler dunkler Gradient mit dezenter Gold-Vignette
 // - HomeHeader: lib/features/home/widgets/home_header.dart
 //   -> Titel "Events", Segmented Tabs, Searchbar mit Filter
 // - CategoryChips: lib/features/home/widgets/category_chips.dart
 //   -> Horizontale Filter-Chips für Kategorien
 // - EventCard: lib/features/home/widgets/event_card.dart
-//   -> Karten mit Thumbnail links
+//   -> Karten mit Bild-Thumbnail links
 // - PlaceholderPage: lib/features/home/widgets/placeholder_page.dart
 //   -> Platzhalter für nicht implementierte Tabs
 //
@@ -24,7 +22,7 @@ import 'package:hersbruck_together/features/home/widgets/category_chips.dart';
 import 'package:hersbruck_together/features/home/widgets/event_card.dart';
 import 'package:hersbruck_together/features/home/widgets/home_header.dart';
 import 'package:hersbruck_together/features/home/widgets/placeholder_page.dart';
-import 'package:hersbruck_together/ui/widgets/star_background.dart';
+import 'package:hersbruck_together/ui/widgets/elegant_background.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,11 +33,32 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _repo = MockEventRepository();
+  late final TextEditingController _searchController;
 
   int _currentTabIndex = 0;
   String _selectedCategory = 'Alle';
   String _searchQuery = '';
   TimeFilter _timeFilter = TimeFilter.heute;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      _searchQuery = _searchController.text;
+    });
+  }
 
   List<Event> _filterEvents(List<Event> events) {
     final now = DateTime.now();
@@ -93,7 +112,8 @@ class _HomePageState extends State<HomePage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CircularProgressIndicator(
-              color: goldAccent,
+              color: goldAccent.withValues(alpha: 0.7),
+              strokeWidth: 2,
             ),
           );
         }
@@ -106,12 +126,7 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 child: HomeHeader(
-                  searchQuery: _searchQuery,
-                  onSearchChanged: (value) {
-                    setState(() {
-                      _searchQuery = value;
-                    });
-                  },
+                  searchController: _searchController,
                   selectedTimeFilter: _timeFilter,
                   onTimeFilterChanged: (filter) {
                     setState(() {
@@ -123,7 +138,7 @@ class _HomePageState extends State<HomePage> {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 0, 12),
+                padding: const EdgeInsets.fromLTRB(20, 14, 0, 12),
                 child: CategoryChips(
                   selectedCategory: _selectedCategory,
                   onCategorySelected: (category) {
@@ -142,15 +157,15 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Icon(
                         Icons.event_busy_outlined,
-                        size: 64,
-                        color: Colors.white.withValues(alpha: 0.4),
+                        size: 56,
+                        color: Colors.white.withValues(alpha: 0.25),
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'Keine Events gefunden',
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 15,
+                          color: Colors.white.withValues(alpha: 0.5),
                         ),
                       ),
                     ],
@@ -159,7 +174,7 @@ class _HomePageState extends State<HomePage> {
               )
             else
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -207,12 +222,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: StarBackground(
+      body: ElegantBackground(
         child: SafeArea(
           bottom: false,
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 500),
+              constraints: const BoxConstraints(maxWidth: 600),
               child: _buildBody(),
             ),
           ),
@@ -220,9 +235,10 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
+          color: const Color(0xFF0A0A0E).withValues(alpha: 0.95),
           border: Border(
             top: BorderSide(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: Colors.white.withValues(alpha: 0.06),
               width: 1,
             ),
           ),
