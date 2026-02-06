@@ -24,6 +24,7 @@ import 'package:hersbruck_together/data/mock/mock_ad_repository.dart';
 import 'package:hersbruck_together/data/mock/mock_event_repository.dart';
 import 'package:hersbruck_together/data/models/ad.dart';
 import 'package:hersbruck_together/data/models/event.dart';
+import 'package:hersbruck_together/features/donation/donation_page.dart';
 import 'package:hersbruck_together/features/home/event_detail_page.dart';
 import 'package:hersbruck_together/features/home/widgets/category_chips.dart';
 import 'package:hersbruck_together/features/home/widgets/event_card.dart';
@@ -275,11 +276,6 @@ class _HomePageState extends State<HomePage> {
           title: 'News',
           icon: Icons.newspaper_outlined,
         );
-      case 3:
-        return const PlaceholderPage(
-          title: 'Spenden',
-          icon: Icons.favorite_outline,
-        );
       default:
         return _buildHomeTab();
     }
@@ -287,19 +283,24 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Spenden tab uses its own page layout
+    final bool isDonationTab = _currentTabIndex == 3;
+
     return Scaffold(
       extendBody: true,
-      body: ElegantBackground(
-        child: SafeArea(
-          bottom: false,
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
-              child: _buildBody(),
+      body: isDonationTab
+          ? const DonationPage()
+          : ElegantBackground(
+              child: SafeArea(
+                bottom: false,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: _buildBody(),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF0A0A0E).withValues(alpha: 0.95),
