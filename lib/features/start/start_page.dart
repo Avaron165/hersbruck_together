@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hersbruck_together/app/theme.dart';
+import 'package:hersbruck_together/features/start/models/sponsor.dart';
 import 'package:hersbruck_together/features/start/widgets/feature_tile.dart';
+import 'package:hersbruck_together/features/start/widgets/sponsor_carousel.dart';
 
 /// Start Page content widget - used as the Home tab in the main shell.
-/// Displays app branding, logo, and navigation tiles to other tabs.
+/// Displays app branding, logo, sponsor carousel, and navigation tiles.
 class StartPageContent extends StatelessWidget {
   final void Function(int tabIndex) onSelectTab;
 
@@ -16,16 +18,26 @@ class StartPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
+        // Header with logo and title
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 48, 24, 0),
             child: _buildHeader(),
           ),
         ),
+        // Sponsor carousel
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 32, 0, 0),
+            child: SponsorCarousel(sponsors: demoSponsors),
+          ),
+        ),
+        // Navigation tiles
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(24, 40, 24, 40),
+          padding: const EdgeInsets.fromLTRB(24, 32, 24, 40),
           sliver: _buildTileGrid(),
         ),
+        // Footer
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
