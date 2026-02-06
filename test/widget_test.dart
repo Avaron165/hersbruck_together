@@ -2,18 +2,25 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hersbruck_together/app/app.dart';
 
 void main() {
-  testWidgets('App starts', (WidgetTester tester) async {
+  testWidgets('App starts with StartPage', (WidgetTester tester) async {
     await tester.pumpWidget(const HersbruckTogetherApp());
 
-    // 1) erster Frame
+    // First frame
     await tester.pump();
 
-    // 2) Timer aus MockEventRepository (150ms) ablaufen lassen
-    await tester.pump(const Duration(milliseconds: 200));
-
-    // 3) dann noch ausrendern lassen
+    // Let animations settle
     await tester.pumpAndSettle();
 
+    // StartPage should show the app title
+    expect(find.text('Hersbruck Together'), findsOneWidget);
+
+    // StartPage should show the subtitle
+    expect(find.text('Entdecken • Mitmachen • Unterstützen'), findsOneWidget);
+
+    // StartPage should show all feature tiles
     expect(find.text('Events'), findsOneWidget);
+    expect(find.text('Karte'), findsOneWidget);
+    expect(find.text('News'), findsOneWidget);
+    expect(find.text('Spenden'), findsOneWidget);
   });
 }

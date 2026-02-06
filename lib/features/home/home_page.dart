@@ -35,7 +35,9 @@ import 'package:hersbruck_together/features/home/widgets/sponsored_card.dart';
 import 'package:hersbruck_together/ui/widgets/elegant_background.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final int initialTabIndex;
+
+  const HomePage({super.key, this.initialTabIndex = 0});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -46,7 +48,7 @@ class _HomePageState extends State<HomePage> {
   final _adRepo = MockAdRepository();
   late final TextEditingController _searchController;
 
-  int _currentTabIndex = 0;
+  late int _currentTabIndex;
   String _selectedCategory = 'Alle';
   String _searchQuery = '';
   TimeFilter _timeFilter = TimeFilter.heute;
@@ -57,6 +59,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _currentTabIndex = widget.initialTabIndex;
     _searchController = TextEditingController();
     _searchController.addListener(_onSearchChanged);
     _loadEvents();

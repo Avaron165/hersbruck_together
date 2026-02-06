@@ -11,8 +11,9 @@ class HersbruckTogetherApp extends StatelessWidget {
       title: 'Hersbruck Together',
       theme: buildTheme(),
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.home,
+      initialRoute: Routes.start,
       routes: routes,
+      onGenerateRoute: onGenerateRoute,
     );
   }
 }
