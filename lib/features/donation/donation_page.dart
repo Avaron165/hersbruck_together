@@ -179,7 +179,6 @@ class _DonationPageState extends State<DonationPage> {
             ),
           ),
         ),
-      ),
     );
   }
 
