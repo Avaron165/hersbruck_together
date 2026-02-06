@@ -4,6 +4,7 @@
 // - Home (Start Page): App branding and navigation tiles
 // - Events: Event list with search and filters
 // - Entdecken: Points of Interest (Sehenswürdigkeiten)
+// - Aktionen: Partner promotions and discounts
 // - Karte: Interactive map with event markers
 // - Spenden: Donation page
 //
@@ -20,6 +21,7 @@ import 'package:hersbruck_together/data/mock/mock_ad_repository.dart';
 import 'package:hersbruck_together/data/mock/mock_event_repository.dart';
 import 'package:hersbruck_together/data/models/ad.dart';
 import 'package:hersbruck_together/data/models/event.dart';
+import 'package:hersbruck_together/features/actions/actions_page.dart';
 import 'package:hersbruck_together/features/donation/donation_page.dart';
 import 'package:hersbruck_together/features/explore/explore_page.dart';
 import 'package:hersbruck_together/features/home/event_detail_page.dart';
@@ -271,14 +273,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Tab indices: 0=Home, 1=Events, 2=Entdecken, 3=Karte, 4=Spenden
+    // Tab indices: 0=Home, 1=Events, 2=Entdecken, 3=Aktionen, 4=Karte, 5=Spenden
     final bool isExploreTab = _currentTabIndex == 2;
-    final bool isMapTab = _currentTabIndex == 3;
-    final bool isDonationTab = _currentTabIndex == 4;
+    final bool isActionsTab = _currentTabIndex == 3;
+    final bool isMapTab = _currentTabIndex == 4;
+    final bool isDonationTab = _currentTabIndex == 5;
 
     Widget body;
     if (isExploreTab) {
       body = const ExplorePage();
+    } else if (isActionsTab) {
+      body = const ActionsPage();
     } else if (isMapTab) {
       body = const MapPage();
     } else if (isDonationTab) {
@@ -336,6 +341,11 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.explore_outlined),
               selectedIcon: Icon(Icons.explore),
               label: 'Entdecken',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.local_offer_outlined),
+              selectedIcon: Icon(Icons.local_offer),
+              label: 'Aktionen',
             ),
             NavigationDestination(
               icon: Icon(Icons.location_on_outlined),

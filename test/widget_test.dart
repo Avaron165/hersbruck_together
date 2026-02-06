@@ -8,7 +8,7 @@ void main() {
     // First frame
     await tester.pump();
 
-    // Let async operations complete (MockEventRepository and MockPoiRepository delay)
+    // Let async operations complete (MockEventRepository, MockPoiRepository, MockActionRepository delay)
     await tester.pump(const Duration(milliseconds: 200));
 
     // Let animations settle
@@ -22,9 +22,10 @@ void main() {
 
     // Start Page should show navigation tiles and bottom nav items
     expect(find.text('Events'), findsWidgets); // Tile and bottom nav
+    expect(find.text('Entdecken'), findsWidgets); // Tile and bottom nav
+    expect(find.text('Aktionen'), findsWidgets); // Tile and bottom nav
     expect(find.text('Karte'), findsWidgets);  // Tile and bottom nav
     expect(find.text('Spenden'), findsWidgets); // Tile and bottom nav
-    expect(find.text('Entdecken'), findsWidgets); // Tile and bottom nav
 
     // Bottom navigation should show Home tab
     expect(find.text('Home'), findsOneWidget);
