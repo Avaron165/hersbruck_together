@@ -5,9 +5,10 @@
 class MapConfig {
   MapConfig._();
 
-  /// MapTiler dark style URL (includes API key)
-  static const String styleUrl =
-      'https://api.maptiler.com/maps/dataviz-dark/style.json?key=XPJaPqQZV6bxT6HBvwlQ';
+  /// MapTiler dark raster tile URL (includes API key)
+  /// Uses {z}/{x}/{y} placeholders for tile coordinates
+  static const String tileUrl =
+      'https://api.maptiler.com/maps/dataviz-dark/{z}/{x}/{y}.png?key=XPJaPqQZV6bxT6HBvwlQ';
 
   /// Initial map center: Hersbruck, Germany
   static const double initialLatitude = 49.5086;

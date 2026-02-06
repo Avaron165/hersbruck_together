@@ -1,7 +1,6 @@
-import 'dart:math' show Point;
-
 import 'package:flutter/material.dart';
-import 'package:maplibre_gl/maplibre_gl.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:hersbruck_together/app/theme.dart';
 import 'package:hersbruck_together/data/mock/mock_event_repository.dart';
 import 'package:hersbruck_together/data/models/event.dart';
@@ -17,15 +16,14 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final _eventRepo = MockEventRepository();
+  final _mapController = MapController();
 
-  MapLibreMapController? _mapController;
   List<Event> _events = [];
   bool _isLoading = true;
-  final Map<String, Event> _markerEventMap = {};
 
-  static const _initialCameraPosition = CameraPosition(
-    target: LatLng(MapConfig.initialLatitude, MapConfig.initialLongitude),
-    zoom: MapConfig.initialZoom,
+  static final _initialCenter = LatLng(
+    MapConfig.initialLatitude,
+    MapConfig.initialLongitude,
   );
 
   @override
@@ -44,49 +42,6 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  void _onMapCreated(MapLibreMapController controller) {
-    _mapController = controller;
-  }
-
-  Future<void> _onStyleLoaded() async {
-    await _addEventMarkers();
-  }
-
-  Future<void> _addEventMarkers() async {
-    if (_mapController == null) return;
-
-    for (final event in _events) {
-      if (!event.hasCoordinates) continue;
-
-      final symbolOptions = SymbolOptions(
-        geometry: LatLng(event.latitude!, event.longitude!),
-        iconImage: 'marker',
-        iconSize: 0.12,
-        iconColor: '#C9A46A',
-        textField: event.title,
-        textSize: 11,
-        textColor: '#FFFFFF',
-        textHaloColor: '#000000',
-        textHaloWidth: 1.5,
-        textOffset: const Offset(0, 1.8),
-        textAnchor: 'top',
-        textMaxWidth: 12,
-      );
-
-      final symbol = await _mapController!.addSymbol(symbolOptions);
-      _markerEventMap[symbol.id] = event;
-    }
-
-    _mapController!.onSymbolTapped.add(_onMarkerTapped);
-  }
-
-  void _onMarkerTapped(Symbol symbol) {
-    final event = _markerEventMap[symbol.id];
-    if (event != null) {
-      _openEventDetail(event);
-    }
-  }
-
   void _openEventDetail(Event event) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -96,16 +51,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _recenterMap() {
-    _mapController?.animateCamera(
-      CameraUpdate.newCameraPosition(_initialCameraPosition),
-      duration: const Duration(milliseconds: 500),
-    );
-  }
-
-  @override
-  void dispose() {
-    _mapController?.onSymbolTapped.remove(_onMarkerTapped);
-    super.dispose();
+    _mapController.move(_initialCenter, MapConfig.initialZoom);
   }
 
   @override
@@ -120,17 +66,61 @@ class _MapPageState extends State<MapPage> {
   }
 
   Widget _buildMap() {
-    return MapLibreMap(
-      styleString: MapConfig.styleUrl,
-      initialCameraPosition: _initialCameraPosition,
-      onMapCreated: _onMapCreated,
-      onStyleLoadedCallback: _onStyleLoaded,
-      minMaxZoomPreference:
-          const MinMaxZoomPreference(MapConfig.minZoom, MapConfig.maxZoom),
-      trackCameraPosition: true,
-      compassEnabled: false,
-      attributionButtonMargins: Point<num>(-100, -100),
+    return FlutterMap(
+      mapController: _mapController,
+      options: MapOptions(
+        initialCenter: _initialCenter,
+        initialZoom: MapConfig.initialZoom,
+        minZoom: MapConfig.minZoom,
+        maxZoom: MapConfig.maxZoom,
+        backgroundColor: const Color(0xFF1a1a1e),
+      ),
+      children: [
+        TileLayer(
+          urlTemplate: MapConfig.tileUrl,
+          userAgentPackageName: 'com.hersbruck.together',
+          tileProvider: NetworkTileProvider(),
+        ),
+        MarkerLayer(
+          markers: _buildMarkers(),
+        ),
+      ],
     );
+  }
+
+  List<Marker> _buildMarkers() {
+    return _events.map((event) {
+      return Marker(
+        point: LatLng(event.latitude!, event.longitude!),
+        width: 40,
+        height: 40,
+        child: GestureDetector(
+          onTap: () => _openEventDetail(event),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF1a1a1e).withValues(alpha: 0.9),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: goldAccent.withValues(alpha: 0.8),
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.4),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.event,
+              color: goldAccent,
+              size: 20,
+            ),
+          ),
+        ),
+      );
+    }).toList();
   }
 
   Widget _buildRecenterButton() {
