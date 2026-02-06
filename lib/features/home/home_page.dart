@@ -1,22 +1,17 @@
-// Hersbruck Together - Home Page UI Mockup (Dark + Gold + Elegant)
+// Hersbruck Together - Main Shell with Tab Navigation
 //
-// Aufbau:
+// Tabs:
+// - Home (Start Page): App branding and navigation tiles
+// - Events: Event list with search and filters
+// - Karte: Interactive map with event markers
+// - Spenden: Donation page
+//
+// Shared Widgets:
 // - ElegantBackground: lib/ui/widgets/elegant_background.dart
-//   -> Subtiler dunkler Gradient mit dezenter Gold-Vignette
 // - HomeHeader: lib/features/home/widgets/home_header.dart
-//   -> Titel "Events", Segmented Tabs, Searchbar mit Filter
 // - CategoryChips: lib/features/home/widgets/category_chips.dart
-//   -> Horizontale Filter-Chips für Kategorien
 // - EventCard: lib/features/home/widgets/event_card.dart
-//   -> Karten mit Bild-Thumbnail links
 // - SponsoredCard: lib/features/home/widgets/sponsored_card.dart
-//   -> Dezente Partner-Werbung nach dem 2. Event
-// - EventDetailPage: lib/features/home/event_detail_page.dart
-//   -> Detailseite für Events
-// - PlaceholderPage: lib/features/home/widgets/placeholder_page.dart
-//   -> Platzhalter für nicht implementierte Tabs
-//
-// State: selectedCategory, searchQuery, currentTabIndex, timeFilter
 
 import 'package:flutter/material.dart';
 import 'package:hersbruck_together/app/theme.dart';
@@ -26,12 +21,12 @@ import 'package:hersbruck_together/data/models/ad.dart';
 import 'package:hersbruck_together/data/models/event.dart';
 import 'package:hersbruck_together/features/donation/donation_page.dart';
 import 'package:hersbruck_together/features/home/event_detail_page.dart';
-import 'package:hersbruck_together/features/map/map_page.dart';
 import 'package:hersbruck_together/features/home/widgets/category_chips.dart';
 import 'package:hersbruck_together/features/home/widgets/event_card.dart';
 import 'package:hersbruck_together/features/home/widgets/home_header.dart';
-import 'package:hersbruck_together/features/home/widgets/placeholder_page.dart';
 import 'package:hersbruck_together/features/home/widgets/sponsored_card.dart';
+import 'package:hersbruck_together/features/map/map_page.dart';
+import 'package:hersbruck_together/features/start/start_page.dart';
 import 'package:hersbruck_together/ui/widgets/elegant_background.dart';
 
 class HomePage extends StatefulWidget {
@@ -85,6 +80,12 @@ class _HomePageState extends State<HomePage> {
   void _onSearchChanged() {
     setState(() {
       _searchQuery = _searchController.text;
+    });
+  }
+
+  void _selectTab(int index) {
+    setState(() {
+      _currentTabIndex = index;
     });
   }
 
@@ -186,7 +187,7 @@ class _HomePageState extends State<HomePage> {
     return items;
   }
 
-  Widget _buildHomeTab() {
+  Widget _buildEventsTab() {
     final events = _isLoading ? <Event>[] : _filterEvents(_events ?? []);
     final sponsoredAd = _adRepo.getSponsoredAd();
     final listItems = _buildListItems(events, sponsoredAd);
@@ -266,24 +267,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildBody() {
-    switch (_currentTabIndex) {
-      case 0:
-        return _buildHomeTab();
-      case 2:
-        return const PlaceholderPage(
-          title: 'News',
-          icon: Icons.newspaper_outlined,
-        );
-      default:
-        return _buildHomeTab();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Map and Spenden tabs use their own page layouts (without ElegantBackground)
-    final bool isMapTab = _currentTabIndex == 1;
+    // Tab indices: 0=Home, 1=Events, 2=Karte, 3=Spenden
+    final bool isMapTab = _currentTabIndex == 2;
     final bool isDonationTab = _currentTabIndex == 3;
 
     Widget body;
@@ -292,13 +279,21 @@ class _HomePageState extends State<HomePage> {
     } else if (isDonationTab) {
       body = const DonationPage();
     } else {
+      // Home (0) and Events (1) use ElegantBackground
+      Widget tabContent;
+      if (_currentTabIndex == 0) {
+        tabContent = StartPageContent(onSelectTab: _selectTab);
+      } else {
+        tabContent = _buildEventsTab();
+      }
+
       body = ElegantBackground(
         child: SafeArea(
           bottom: false,
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 600),
-              child: _buildBody(),
+              child: tabContent,
             ),
           ),
         ),
@@ -320,11 +315,7 @@ class _HomePageState extends State<HomePage> {
         ),
         child: NavigationBar(
           selectedIndex: _currentTabIndex,
-          onDestinationSelected: (index) {
-            setState(() {
-              _currentTabIndex = index;
-            });
-          },
+          onDestinationSelected: _selectTab,
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
@@ -332,14 +323,14 @@ class _HomePageState extends State<HomePage> {
               label: 'Home',
             ),
             NavigationDestination(
+              icon: Icon(Icons.event_outlined),
+              selectedIcon: Icon(Icons.event),
+              label: 'Events',
+            ),
+            NavigationDestination(
               icon: Icon(Icons.location_on_outlined),
               selectedIcon: Icon(Icons.location_on),
               label: 'Karte',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.newspaper_outlined),
-              selectedIcon: Icon(Icons.newspaper),
-              label: 'News',
             ),
             NavigationDestination(
               icon: Icon(Icons.favorite_outline),

@@ -1,72 +1,69 @@
 import 'package:flutter/material.dart';
-import 'package:hersbruck_together/app/routes.dart';
 import 'package:hersbruck_together/app/theme.dart';
 import 'package:hersbruck_together/features/start/widgets/feature_tile.dart';
-import 'package:hersbruck_together/ui/widgets/elegant_background.dart';
 
-class StartPage extends StatelessWidget {
-  const StartPage({super.key});
+/// Start Page content widget - used as the Home tab in the main shell.
+/// Displays app branding, logo, and navigation tiles to other tabs.
+class StartPageContent extends StatelessWidget {
+  final void Function(int tabIndex) onSelectTab;
 
-  void _navigateToTab(BuildContext context, int tabIndex) {
-    Navigator.of(context).pushReplacementNamed(
-      Routes.home,
-      arguments: {'initialTabIndex': tabIndex},
-    );
-  }
+  const StartPageContent({
+    super.key,
+    required this.onSelectTab,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ElegantBackground(
-        child: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 48, 24, 0),
-                      child: _buildHeader(),
-                    ),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(24, 40, 24, 40),
-                    sliver: _buildTileGrid(context),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
-                      child: _buildFooter(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 48, 24, 0),
+            child: _buildHeader(),
           ),
         ),
-      ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(24, 40, 24, 40),
+          sliver: _buildTileGrid(),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
+            child: _buildFooter(),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildHeader() {
     return Column(
       children: [
+        // App logo from assets
         Container(
-          width: 80,
-          height: 80,
+          width: 100,
+          height: 100,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: goldAccent.withValues(alpha: 0.15),
             border: Border.all(
               color: goldAccent.withValues(alpha: 0.3),
               width: 2,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: goldAccent.withValues(alpha: 0.15),
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+            ],
           ),
-          child: Icon(
-            Icons.location_city,
-            size: 36,
-            color: goldAccent,
+          child: ClipOval(
+            child: Image.asset(
+              'lib/assets/icon/app_icon.png',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         const SizedBox(height: 24),
@@ -94,24 +91,19 @@ class StartPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTileGrid(BuildContext context) {
+  Widget _buildTileGrid() {
+    // Tiles for navigating to other tabs (Events=1, Karte=2, Spenden=3)
     final tiles = [
       _TileData(
         icon: Icons.event,
         title: 'Events',
         description: 'Veranstaltungen in Hersbruck entdecken',
-        tabIndex: 0,
+        tabIndex: 1,
       ),
       _TileData(
         icon: Icons.map,
         title: 'Karte',
         description: 'Orte und Events auf der Karte',
-        tabIndex: 1,
-      ),
-      _TileData(
-        icon: Icons.newspaper,
-        title: 'News',
-        description: 'Neuigkeiten aus der Region',
         tabIndex: 2,
       ),
       _TileData(
@@ -136,7 +128,7 @@ class StartPage extends StatelessWidget {
             icon: tile.icon,
             title: tile.title,
             description: tile.description,
-            onTap: () => _navigateToTab(context, tile.tabIndex),
+            onTap: () => onSelectTab(tile.tabIndex),
           );
         },
         childCount: tiles.length,
