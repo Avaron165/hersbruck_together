@@ -127,7 +127,7 @@ class _MapPageState extends State<MapPage> {
           const MinMaxZoomPreference(MapConfig.minZoom, MapConfig.maxZoom),
       trackCameraPosition: true,
       compassEnabled: false,
-      attributionButtonMargins: const Point(-100, -100),
+      attributionButtonMargins: Point<num>(-100, -100),
     );
   }
 
