@@ -26,6 +26,7 @@ import 'package:hersbruck_together/data/models/ad.dart';
 import 'package:hersbruck_together/data/models/event.dart';
 import 'package:hersbruck_together/features/donation/donation_page.dart';
 import 'package:hersbruck_together/features/home/event_detail_page.dart';
+import 'package:hersbruck_together/features/map/map_page.dart';
 import 'package:hersbruck_together/features/home/widgets/category_chips.dart';
 import 'package:hersbruck_together/features/home/widgets/event_card.dart';
 import 'package:hersbruck_together/features/home/widgets/home_header.dart';
@@ -266,11 +267,6 @@ class _HomePageState extends State<HomePage> {
     switch (_currentTabIndex) {
       case 0:
         return _buildHomeTab();
-      case 1:
-        return const PlaceholderPage(
-          title: 'Karte',
-          icon: Icons.map_outlined,
-        );
       case 2:
         return const PlaceholderPage(
           title: 'News',
@@ -283,24 +279,32 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Spenden tab uses its own page layout
+    // Map and Spenden tabs use their own page layouts (without ElegantBackground)
+    final bool isMapTab = _currentTabIndex == 1;
     final bool isDonationTab = _currentTabIndex == 3;
+
+    Widget body;
+    if (isMapTab) {
+      body = const MapPage();
+    } else if (isDonationTab) {
+      body = const DonationPage();
+    } else {
+      body = ElegantBackground(
+        child: SafeArea(
+          bottom: false,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: _buildBody(),
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       extendBody: true,
-      body: isDonationTab
-          ? const DonationPage()
-          : ElegantBackground(
-              child: SafeArea(
-                bottom: false,
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 600),
-                    child: _buildBody(),
-                  ),
-                ),
-              ),
-            ),
+      body: body,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF0A0A0E).withValues(alpha: 0.95),

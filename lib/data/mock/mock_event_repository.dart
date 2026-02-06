@@ -16,6 +16,8 @@ class MockEventRepository implements EventRepository {
         location: 'Schlossplatz Hersbruck',
         category: 'Feste',
         imageUrl: 'https://picsum.photos/seed/weinfest/300/200',
+        latitude: 49.5078,
+        longitude: 11.4295,
       ),
       Event(
         id: '2',
@@ -25,6 +27,8 @@ class MockEventRepository implements EventRepository {
         location: 'Nürnberger Tor',
         category: 'Kultur',
         imageUrl: 'https://picsum.photos/seed/altstadt/300/200',
+        latitude: 49.5092,
+        longitude: 11.4310,
       ),
       Event(
         id: '3',
@@ -33,6 +37,8 @@ class MockEventRepository implements EventRepository {
         location: 'Kulturbahnhof Hersbruck',
         category: 'Kultur',
         imageUrl: 'https://picsum.photos/seed/liveband/300/200',
+        latitude: 49.5060,
+        longitude: 11.4230,
       ),
       Event(
         id: '4',
@@ -41,6 +47,8 @@ class MockEventRepository implements EventRepository {
         location: 'Hersbrucker Theatercafé',
         category: 'Familie',
         imageUrl: 'https://picsum.photos/seed/theater/300/200',
+        latitude: 49.5085,
+        longitude: 11.4268,
       ),
       Event(
         id: '5',
@@ -49,6 +57,8 @@ class MockEventRepository implements EventRepository {
         location: 'Krone Biergarten',
         category: 'Feste',
         imageUrl: 'https://picsum.photos/seed/biergarten/300/200',
+        latitude: 49.5070,
+        longitude: 11.4255,
       ),
       Event(
         id: '6',
@@ -58,6 +68,8 @@ class MockEventRepository implements EventRepository {
         location: 'Marktplatz',
         category: 'Familie',
         imageUrl: 'https://picsum.photos/seed/kinderfest/300/200',
+        latitude: 49.5082,
+        longitude: 11.4280,
       ),
       Event(
         id: '7',
@@ -66,6 +78,8 @@ class MockEventRepository implements EventRepository {
         location: 'Stadtpark',
         category: 'Freizeit',
         imageUrl: 'https://picsum.photos/seed/yogapark/300/200',
+        latitude: 49.5100,
+        longitude: 11.4320,
       ),
       Event(
         id: '8',
@@ -75,8 +89,9 @@ class MockEventRepository implements EventRepository {
         location: 'Stadtgalerie',
         category: 'Kultur',
         imageUrl: 'https://picsum.photos/seed/kunstgalerie/300/200',
+        latitude: 49.5075,
+        longitude: 11.4265,
       ),
-      // Weitere Events über die kommenden Wochen verteilt
       Event(
         id: '9',
         title: 'Flohmarkt am Schloss',
@@ -85,6 +100,8 @@ class MockEventRepository implements EventRepository {
         location: 'Schlossareal',
         category: 'Freizeit',
         imageUrl: 'https://picsum.photos/seed/flohmarkt/300/200',
+        latitude: 49.5080,
+        longitude: 11.4300,
       ),
       Event(
         id: '10',
@@ -94,6 +111,8 @@ class MockEventRepository implements EventRepository {
         location: 'Feuerwehrhaus Hersbruck',
         category: 'Feste',
         imageUrl: 'https://picsum.photos/seed/feuerwehr/300/200',
+        latitude: 49.5045,
+        longitude: 11.4350,
       ),
       Event(
         id: '11',
@@ -103,6 +122,8 @@ class MockEventRepository implements EventRepository {
         location: 'Lichtspielhaus',
         category: 'Familie',
         imageUrl: 'https://picsum.photos/seed/kinderkino/300/200',
+        latitude: 49.5088,
+        longitude: 11.4272,
       ),
       Event(
         id: '12',
@@ -112,6 +133,8 @@ class MockEventRepository implements EventRepository {
         location: 'Stadtbücherei Hersbruck',
         category: 'Kultur',
         imageUrl: 'https://picsum.photos/seed/lesung/300/200',
+        latitude: 49.5079,
+        longitude: 11.4285,
       ),
       Event(
         id: '13',
@@ -121,6 +144,8 @@ class MockEventRepository implements EventRepository {
         location: 'Sportplatz Hersbruck',
         category: 'Freizeit',
         imageUrl: 'https://picsum.photos/seed/lauftreff/300/200',
+        latitude: 49.5035,
+        longitude: 11.4380,
       ),
       Event(
         id: '14',
@@ -130,6 +155,8 @@ class MockEventRepository implements EventRepository {
         location: 'Marktplatz',
         category: 'Freizeit',
         imageUrl: 'https://picsum.photos/seed/bauernmarkt/300/200',
+        latitude: 49.5082,
+        longitude: 11.4280,
       ),
       Event(
         id: '15',
@@ -139,6 +166,8 @@ class MockEventRepository implements EventRepository {
         location: 'Klosterhof',
         category: 'Kultur',
         imageUrl: 'https://picsum.photos/seed/klassik/300/200',
+        latitude: 49.5088,
+        longitude: 11.4275,
       ),
       Event(
         id: '16',
@@ -148,6 +177,8 @@ class MockEventRepository implements EventRepository {
         location: 'Treffpunkt: Bahnhof',
         category: 'Familie',
         imageUrl: 'https://picsum.photos/seed/radtour/300/200',
+        latitude: 49.5055,
+        longitude: 11.4225,
       ),
       Event(
         id: '17',
@@ -157,6 +188,8 @@ class MockEventRepository implements EventRepository {
         location: 'Festplatz',
         category: 'Feste',
         imageUrl: 'https://picsum.photos/seed/streetfood/300/200',
+        latitude: 49.5040,
+        longitude: 11.4300,
       ),
       Event(
         id: '18',
@@ -166,6 +199,8 @@ class MockEventRepository implements EventRepository {
         location: 'Kletterhalle Pegnitz',
         category: 'Familie',
         imageUrl: 'https://picsum.photos/seed/klettern/300/200',
+        latitude: 49.4920,
+        longitude: 11.5450,
       ),
       Event(
         id: '19',
@@ -175,6 +210,8 @@ class MockEventRepository implements EventRepository {
         location: 'Kulturbahnhof Hersbruck',
         category: 'Kultur',
         imageUrl: 'https://picsum.photos/seed/jazzabend/300/200',
+        latitude: 49.5060,
+        longitude: 11.4230,
       ),
       Event(
         id: '20',
@@ -184,6 +221,8 @@ class MockEventRepository implements EventRepository {
         location: 'Treffpunkt: Parkplatz Krottensee',
         category: 'Freizeit',
         imageUrl: 'https://picsum.photos/seed/grotte/300/200',
+        latitude: 49.5200,
+        longitude: 11.4600,
       ),
       Event(
         id: '21',
@@ -193,6 +232,8 @@ class MockEventRepository implements EventRepository {
         location: 'Altstadt Hersbruck',
         category: 'Feste',
         imageUrl: 'https://picsum.photos/seed/buergerfest/300/200',
+        latitude: 49.5086,
+        longitude: 11.4283,
       ),
       Event(
         id: '22',
@@ -202,6 +243,8 @@ class MockEventRepository implements EventRepository {
         location: 'VHS Hersbruck',
         category: 'Freizeit',
         imageUrl: 'https://picsum.photos/seed/malkurs/300/200',
+        latitude: 49.5070,
+        longitude: 11.4290,
       ),
       Event(
         id: '23',
@@ -211,6 +254,8 @@ class MockEventRepository implements EventRepository {
         location: 'Stadtpark Pavillon',
         category: 'Familie',
         imageUrl: 'https://picsum.photos/seed/kasperl/300/200',
+        latitude: 49.5098,
+        longitude: 11.4315,
       ),
       Event(
         id: '24',
@@ -219,6 +264,8 @@ class MockEventRepository implements EventRepository {
         location: 'Schlossplatz Hersbruck',
         category: 'Kultur',
         imageUrl: 'https://picsum.photos/seed/openairkino/300/200',
+        latitude: 49.5078,
+        longitude: 11.4295,
       ),
       Event(
         id: '25',
@@ -228,6 +275,8 @@ class MockEventRepository implements EventRepository {
         location: 'Beachvolleyball-Anlage',
         category: 'Freizeit',
         imageUrl: 'https://picsum.photos/seed/volleyball/300/200',
+        latitude: 49.5030,
+        longitude: 11.4370,
       ),
       Event(
         id: '26',
@@ -237,6 +286,8 @@ class MockEventRepository implements EventRepository {
         location: 'Gasthaus zur Krone',
         category: 'Feste',
         imageUrl: 'https://picsum.photos/seed/weisswurst/300/200',
+        latitude: 49.5070,
+        longitude: 11.4255,
       ),
       Event(
         id: '27',
@@ -246,6 +297,8 @@ class MockEventRepository implements EventRepository {
         location: 'Jugendzentrum',
         category: 'Familie',
         imageUrl: 'https://picsum.photos/seed/basteln/300/200',
+        latitude: 49.5065,
+        longitude: 11.4245,
       ),
       Event(
         id: '28',
@@ -255,6 +308,8 @@ class MockEventRepository implements EventRepository {
         location: 'Freilichtbühne',
         category: 'Kultur',
         imageUrl: 'https://picsum.photos/seed/jedermann/300/200',
+        latitude: 49.5095,
+        longitude: 11.4260,
       ),
       Event(
         id: '29',
@@ -264,6 +319,8 @@ class MockEventRepository implements EventRepository {
         location: 'Happurger Stausee',
         category: 'Familie',
         imageUrl: 'https://picsum.photos/seed/fledermaus/300/200',
+        latitude: 49.4850,
+        longitude: 11.4750,
       ),
       Event(
         id: '30',
@@ -273,6 +330,8 @@ class MockEventRepository implements EventRepository {
         location: 'Festplatz',
         category: 'Freizeit',
         imageUrl: 'https://picsum.photos/seed/oldtimer/300/200',
+        latitude: 49.5040,
+        longitude: 11.4300,
       ),
       Event(
         id: '31',
@@ -282,6 +341,8 @@ class MockEventRepository implements EventRepository {
         location: 'Innenstadt & Festplatz',
         category: 'Feste',
         imageUrl: 'https://picsum.photos/seed/kirchweih/300/200',
+        latitude: 49.5083,
+        longitude: 11.4285,
       ),
       Event(
         id: '32',
@@ -291,6 +352,8 @@ class MockEventRepository implements EventRepository {
         location: 'Treffpunkt: Waldparkplatz',
         category: 'Freizeit',
         imageUrl: 'https://picsum.photos/seed/pilze/300/200',
+        latitude: 49.5150,
+        longitude: 11.4450,
       ),
       Event(
         id: '33',
@@ -300,6 +363,8 @@ class MockEventRepository implements EventRepository {
         location: 'Schulhof Grundschule',
         category: 'Familie',
         imageUrl: 'https://picsum.photos/seed/kinderfloh/300/200',
+        latitude: 49.5050,
+        longitude: 11.4340,
       ),
     ];
   }

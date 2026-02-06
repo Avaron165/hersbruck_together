@@ -6,6 +6,8 @@ class Event {
   final String location;
   final String category;
   final String? imageUrl;
+  final double? latitude;
+  final double? longitude;
 
   const Event({
     required this.id,
@@ -15,5 +17,9 @@ class Event {
     required this.location,
     required this.category,
     this.imageUrl,
+    this.latitude,
+    this.longitude,
   });
+
+  bool get hasCoordinates => latitude != null && longitude != null;
 }
