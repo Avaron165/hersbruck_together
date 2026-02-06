@@ -104,7 +104,8 @@ class StartPageContent extends StatelessWidget {
   }
 
   Widget _buildTileGrid() {
-    // Tiles for navigating to other tabs (Events=1, Karte=2, Spenden=3)
+    // Tiles for navigating to other tabs
+    // Tab indices: 0=Home, 1=Events, 2=Entdecken, 3=Karte, 4=Spenden
     final tiles = [
       _TileData(
         icon: Icons.event,
@@ -113,16 +114,22 @@ class StartPageContent extends StatelessWidget {
         tabIndex: 1,
       ),
       _TileData(
+        icon: Icons.explore,
+        title: 'Entdecken',
+        description: 'Sehenswürdigkeiten erkunden',
+        tabIndex: 2,
+      ),
+      _TileData(
         icon: Icons.map,
         title: 'Karte',
         description: 'Orte und Events auf der Karte',
-        tabIndex: 2,
+        tabIndex: 3,
       ),
       _TileData(
         icon: Icons.favorite,
         title: 'Spenden',
         description: 'Lokale Projekte unterstützen',
-        tabIndex: 3,
+        tabIndex: 4,
       ),
     ];
 

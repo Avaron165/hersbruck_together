@@ -3,6 +3,7 @@
 // Tabs:
 // - Home (Start Page): App branding and navigation tiles
 // - Events: Event list with search and filters
+// - Entdecken: Points of Interest (Sehenswürdigkeiten)
 // - Karte: Interactive map with event markers
 // - Spenden: Donation page
 //
@@ -20,6 +21,7 @@ import 'package:hersbruck_together/data/mock/mock_event_repository.dart';
 import 'package:hersbruck_together/data/models/ad.dart';
 import 'package:hersbruck_together/data/models/event.dart';
 import 'package:hersbruck_together/features/donation/donation_page.dart';
+import 'package:hersbruck_together/features/explore/explore_page.dart';
 import 'package:hersbruck_together/features/home/event_detail_page.dart';
 import 'package:hersbruck_together/features/home/widgets/category_chips.dart';
 import 'package:hersbruck_together/features/home/widgets/event_card.dart';
@@ -269,12 +271,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Tab indices: 0=Home, 1=Events, 2=Karte, 3=Spenden
-    final bool isMapTab = _currentTabIndex == 2;
-    final bool isDonationTab = _currentTabIndex == 3;
+    // Tab indices: 0=Home, 1=Events, 2=Entdecken, 3=Karte, 4=Spenden
+    final bool isExploreTab = _currentTabIndex == 2;
+    final bool isMapTab = _currentTabIndex == 3;
+    final bool isDonationTab = _currentTabIndex == 4;
 
     Widget body;
-    if (isMapTab) {
+    if (isExploreTab) {
+      body = const ExplorePage();
+    } else if (isMapTab) {
       body = const MapPage();
     } else if (isDonationTab) {
       body = const DonationPage();
@@ -326,6 +331,11 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.event_outlined),
               selectedIcon: Icon(Icons.event),
               label: 'Events',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.explore_outlined),
+              selectedIcon: Icon(Icons.explore),
+              label: 'Entdecken',
             ),
             NavigationDestination(
               icon: Icon(Icons.location_on_outlined),
